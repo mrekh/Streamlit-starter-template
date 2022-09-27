@@ -4,6 +4,8 @@ import json
 
 import requests
 import streamlit as st
+import streamlit_authenticator as stauth
+import yaml
 
 
 def google_autocomplete(keyword: str) -> list[str]:
@@ -30,30 +32,53 @@ def google_autocomplete(keyword: str) -> list[str]:
     list_google_autocomplete_uncleaned: list[list] = json.loads(
         (response.content).decode("UTF-8")[5:])[0]
     list_google_autocomplete_cleaned: list[str] = [
-        element[0].replace('<b>', '').replace('</b>', '')
+        element[0].replace("<b>", "").replace("</b>", "")
         for element in list_google_autocomplete_uncleaned
     ]
 
     return list_google_autocomplete_cleaned
 
 
-# The Streamlit app section
+# The Streamlit app
 st.set_page_config(
     page_title="Oh My App!",
     page_icon="😎",
     layout="wide"
 )
 
-st.title("This is a next level SEO app")
-st.write("Make your ideas real.")
+# The Streamlit app authentication section
+with open("./config.yaml") as file:
+    config = yaml.load(file, Loader=yaml.SafeLoader)
 
-input_google_autocomplete_keyword: str = st.text_input(
-    "What is your seed keyword?")
+authenticator = stauth.Authenticate(
+    config["credentials"],
+    config["cookie"]["name"],
+    config["cookie"]["key"],
+    config["cookie"]["expiry_days"],
+    config["preauthorized"]
+)
 
-if input_google_autocomplete_keyword:
-    output_list_google_autocomplete: list[str] = google_autocomplete(
-        input_google_autocomplete_keyword)
+name, authentication_status, username = authenticator.login("Login", "main")
 
-    if output_list_google_autocomplete:
-        st.download_button("Download the output",
-                           ("\n").join(output_list_google_autocomplete))
+if authentication_status:
+    authenticator.logout('Logout', 'main')
+
+    # The Streamlit app main section
+    st.title("This is a next level SEO app")
+    st.write("Make your ideas real.")
+
+    input_google_autocomplete_keyword: str = st.text_input(
+        "What is your seed keyword?")
+
+    if input_google_autocomplete_keyword:
+        output_list_google_autocomplete: list[str] = google_autocomplete(
+            input_google_autocomplete_keyword)
+
+        if output_list_google_autocomplete:
+            st.download_button("Download the output",
+                               ("\n").join(output_list_google_autocomplete))
+
+elif authentication_status == False:
+    st.error('Username/password is incorrect')
+elif authentication_status == None:
+    st.warning('Please enter your username and password')

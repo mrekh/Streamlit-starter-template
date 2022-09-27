@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    firstUser:
+      email: firstuser@gmail.com
+      name: The first user name
+      password: 12345 # To be replaced with hashed password
+    secondUser:
+      email: seconduser@gmail.com
+      name: The second user name
+      password: 111213 # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+preauthorized:
+  emails:
+    - my@gmail.com
