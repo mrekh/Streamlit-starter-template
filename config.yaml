@@ -2,11 +2,11 @@ credentials:
   usernames:
     firstUser:
       email: firstuser@gmail.com
-      name: The first user name
+      name: The first username
       password: 12345 # To be replaced with hashed password
     secondUser:
       email: seconduser@gmail.com
-      name: The second user name
+      name: The second username
       password: 111213 # To be replaced with hashed password
 cookie:
   expiry_days: 30

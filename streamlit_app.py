@@ -30,7 +30,7 @@ def google_autocomplete(keyword: str) -> list[str]:
                             params=google_autocomplete_params)
 
     list_google_autocomplete_uncleaned: list[list] = json.loads(
-        (response.content).decode("UTF-8")[5:])[0]
+        response.content.decode("UTF-8")[5:])[0]
     list_google_autocomplete_cleaned: list[str] = [
         element[0].replace("<b>", "").replace("</b>", "")
         for element in list_google_autocomplete_uncleaned
@@ -76,9 +76,9 @@ if authentication_status:
 
         if output_list_google_autocomplete:
             st.download_button("Download the output",
-                               ("\n").join(output_list_google_autocomplete))
+                               "\n".join(output_list_google_autocomplete))
 
-elif authentication_status == False:
+elif not authentication_status:
     st.error('Username/password is incorrect')
-elif authentication_status == None:
+elif authentication_status is None:
     st.warning('Please enter your username and password')
